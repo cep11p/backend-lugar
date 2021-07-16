@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Localidad;
+use yii\helpers\ArrayHelper;
 
 /**
 * LocalidadSearch represents the model behind the search form about `app\models\Localidad`.
@@ -129,11 +130,21 @@ class LocalidadSearch extends Localidad
         if(!isset($params['sort']) || empty($params['sort'])){
             $query->orderBy(['nombre' => SORT_ASC]);
         }
-        
+
+        // print_r($query->createCommand()->sql);die();
         /******* Se obtiene la coleccion******/
         $coleccion = array();
         foreach ($dataProvider->getModels() as $value) {
             $coleccion[] = $value->toArray();
+        }
+
+        #incorporamos las localidades extras
+        if($params['extra'] == true){
+            $localidad_extras = LocalidadExtraSearch::search([]);
+            if($localidad_extras['resultado']>0){
+                $coleccion = ArrayHelper::merge($coleccion, $localidad_extras['resultado']);
+            }
+
         }
                
         $resultado['pagesize']=$pagesize;            

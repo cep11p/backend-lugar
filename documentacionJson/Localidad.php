@@ -5,6 +5,8 @@
 * @url http://lugar.local/api/localidads?
 * @method GET
 * @param pagesize = 4 
+* @param extra=1
+* @param nombre=Viedma
 * @arrayReturn
 {
     "pagesize": 4,
