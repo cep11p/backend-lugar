@@ -24,6 +24,12 @@ class Localidad extends BaseLocalidad
         );
     }
 
+    public function setAttributes($values, $safeOnly = true)
+    {
+        parent::setAttributes($values);
+        $this->nombre = mb_strtoupper(mb_substr($this->nombre,0,1,'UTF-8')).mb_strtolower(mb_substr($this->nombre,1,null,'UTF-8'));
+    }
+
     public function rules()
     {
         return ArrayHelper::merge(
