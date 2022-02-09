@@ -72,12 +72,9 @@ class LocalidadSearch extends Localidad
     {
         $query = Localidad::find();
 
+        #Paginacion Dinamica
         if(!isset($params['pagesize']) || !is_numeric($params['pagesize']) || $params['pagesize']==0){
-            $pagesize = 1000;
-            $paginacion = [
-                "pagesize"=>$pagesize,
-                "page"=>(isset($params['page']) && is_numeric($params['page']))?$params['page']:0
-            ];
+            $paginacion =false;
         }else{
             $pagesize = intval($params['pagesize']);
             $paginacion = [
@@ -89,7 +86,7 @@ class LocalidadSearch extends Localidad
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => $paginacion
-        ]);
+        ]);     
 
         $this->load($params,'');
 
@@ -131,7 +128,6 @@ class LocalidadSearch extends Localidad
             $query->orderBy(['nombre' => SORT_ASC]);
         }
 
-        // print_r($query->createCommand()->sql);die();
         /******* Se obtiene la coleccion******/
         $coleccion = array();
         foreach ($dataProvider->getModels() as $value) {
@@ -147,10 +143,16 @@ class LocalidadSearch extends Localidad
 
         }
                
-        $resultado['pagesize']=$pagesize;            
-        $resultado['pages']=ceil($dataProvider->totalCount/$pagesize);                 
-        $resultado['total_filtrado']=$dataProvider->totalCount;
-        $resultado['resultado']=$coleccion;
+        #Paginacion Dinamica
+        if(isset($pagesize)){
+            $paginas = ceil($dataProvider->totalCount/$pagesize);           
+            $resultado['pagesize']=$pagesize;            
+            $resultado['pages']=$paginas;            
+            $resultado['total_filtrado']=$dataProvider->totalCount;
+            $resultado['resultado']=$coleccion;
+        }else{
+            $resultado = $coleccion;
+        }
 
         return $resultado;
     }

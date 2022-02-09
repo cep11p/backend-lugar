@@ -4,7 +4,7 @@
 /**
 * @url http://lugar.local/api/localidads?
 * @method GET
-* @param pagesize = 4 
+* @param pagesize = 4 si el valor es igual a 0 o null la paginacion no se realiza
 * @param extra=1
 * @param nombre=Viedma
 * @arrayReturn
