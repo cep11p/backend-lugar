@@ -68,6 +68,12 @@ class LocalidadSearch extends Localidad
         return $dataProvider;
     }
     
+    /**
+     * Se realiza un filtrado sobre un listado de localidades
+     *
+     * @param [array] $params
+     * @return array
+     */
     public function busquedadGeneral($params)
     {
         $query = Localidad::find();
@@ -95,43 +101,52 @@ class LocalidadSearch extends Localidad
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->from('localidad as l');
+        $query->select([
+            '*',
+            'departamento' => 'd.nombre',
+            'pronvicia' => 'p.nombre',
+        ]);
+        $query->leftJoin("departamento as d", "departamentoid=d.id");
+        $query->leftJoin("provincia as p", "provinciaid=p.id");
+
         
         
         if(isset ($params['ids']) && !empty ($params['ids'])){
             $lista_id = explode(",", $params['ids']);
             $query->andWhere(array('in', 'id', $lista_id));
         }else if(isset($this->provinciaid)){
-            $query->leftJoin("departamento as d", "departamentoid=d.id");
+            // $query->leftJoin("departamento as d", "departamentoid=d.id");
             
             $query->andFilterWhere([
-                'id' => $this->id,
-                'regionid' => $this->regionid,
-                'departamentoid' => $this->departamentoid,
-                'municipioid' => $this->municipioid,
+                'l.id' => $this->id,
+                'l.regionid' => $this->regionid,
+                'l.departamentoid' => $this->departamentoid,
+                'l.municipioid' => $this->municipioid,
                 'd.provinciaid' => $this->provinciaid,
             ]);
-
-            $query->andFilterWhere(['like', 'localidad.nombre', $this->nombre]);
+            
+            $query->andFilterWhere(['like', 'l.nombre', $this->nombre]);
         }else{
             $query->andFilterWhere([
-                'id' => $this->id,
-                'regionid' => $this->regionid,
-                'departamentoid' => $this->departamentoid,
-                'municipioid' => $this->municipioid,
+                'l.id' => $this->id,
+                'l.regionid' => $this->regionid,
+                'l.departamentoid' => $this->departamentoid,
+                'l.municipioid' => $this->municipioid,
             ]);
-
-            $query->andFilterWhere(['like', 'nombre', $this->nombre]);
+            
+            $query->andFilterWhere(['like', 'l.nombre', $this->nombre]);
         }
         
         #predeterminadamente vamos a ordenar el nombre alfabeticamente
         if(!isset($params['sort']) || empty($params['sort'])){
-            $query->orderBy(['nombre' => SORT_ASC]);
+            $query->orderBy(['l.nombre' => SORT_ASC]);
         }
-
+        
         /******* Se obtiene la coleccion******/
         $coleccion = array();
-        foreach ($dataProvider->getModels() as $value) {
-            $coleccion[] = $value->toArray();
+        foreach ($query->createCommand()->queryAll() as $value) {
+            $coleccion[] = $value;
         }
 
         #incorporamos las localidades extras
