@@ -114,7 +114,7 @@ class LocalidadSearch extends Localidad
         
         if(isset ($params['ids']) && !empty ($params['ids'])){
             $lista_id = explode(",", $params['ids']);
-            $query->andWhere(array('in', 'id', $lista_id));
+            $query->andWhere(array('in', 'l.id', $lista_id));
         }else if(isset($this->provinciaid)){
             // $query->leftJoin("departamento as d", "departamentoid=d.id");
             
@@ -150,8 +150,9 @@ class LocalidadSearch extends Localidad
         }
 
         #incorporamos las localidades extras
+        $localidadSearch = new LocalidadSearch();
         if($params['extra'] == true){
-            $localidad_extras = LocalidadExtraSearch::search([]);
+            $localidad_extras = $localidadSearch->busquedadGeneral([]);
             if($localidad_extras['resultado']>0){
                 $coleccion = ArrayHelper::merge($coleccion, $localidad_extras['resultado']);
             }
