@@ -103,7 +103,7 @@ class LocalidadSearch extends Localidad
         }
         $query->from('localidad as l');
         $query->select([
-            '*',
+            'l.*',
             'departamento' => 'd.nombre',
             'pronvicia' => 'p.nombre',
         ]);
