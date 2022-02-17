@@ -42,6 +42,7 @@ class LocalidadExtraSearch extends LocalidadExtra
     {
         $query = LocalidadExtra::find();
 
+        #Paginacion Dinamica
         if(!isset($params['pagesize']) || !is_numeric($params['pagesize']) || $params['pagesize']==0){
             $paginacion =false;
         }else{
@@ -51,6 +52,7 @@ class LocalidadExtraSearch extends LocalidadExtra
                 "page"=>(isset($params['page']) && is_numeric($params['page']))?$params['page']:0
             ];
         }
+
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -94,9 +96,19 @@ class LocalidadExtraSearch extends LocalidadExtra
             $localidad_ids .= (empty($localidad_ids))?$value->localidadid:','.$value->localidadid;
         }
         $localidad_ids = (empty($localidad_ids))?99999999:$localidad_ids;
-        $resultado = $localidadSeach->busquedadGeneral(['ids'=>$localidad_ids]);
+        $coleccion = $localidadSeach->busquedadGeneral(['ids'=>$localidad_ids]);
+
+        #Paginacion Dinamica
+        if(isset($pagesize)){
+            $paginas = ceil($dataProvider->totalCount/$pagesize);           
+            $resultado['pagesize']=$pagesize;            
+            $resultado['pages']=$paginas;            
+            $resultado['total_filtrado']=$dataProvider->totalCount;
+            $resultado['resultado']=$coleccion;
+        }else{
+            $resultado = $coleccion;
+        }
 
         return $resultado;
-
     }
 }
