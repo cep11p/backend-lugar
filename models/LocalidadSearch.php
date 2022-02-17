@@ -150,13 +150,12 @@ class LocalidadSearch extends Localidad
         }
 
         #incorporamos las localidades extras
-        $localidadSearch = new LocalidadSearch();
+        $localidadExtraSearch = new LocalidadExtraSearch();
         if($params['extra'] == true){
-            $localidad_extras = $localidadSearch->busquedadGeneral([]);
-            if($localidad_extras['resultado']>0){
-                $coleccion = ArrayHelper::merge($coleccion, $localidad_extras['resultado']);
+            $localidad_extras = $localidadExtraSearch->search([]);
+            if(count($localidad_extras)>0){
+                $coleccion = ArrayHelper::merge($coleccion, $localidad_extras);
             }
-
         }
                
         #Paginacion Dinamica

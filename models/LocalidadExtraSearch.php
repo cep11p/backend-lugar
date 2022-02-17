@@ -36,7 +36,7 @@ class LocalidadExtraSearch extends LocalidadExtra
     *
     * @param array $params
     *
-    * @return ActiveDataProvider
+    * @return array
     */
     public function search($params)
     {
